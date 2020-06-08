@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Todolist</title>
+  </head>
+  <style>
+    li {
+      margin-bottom: 10px;
+    }
+    .danger{
+        border-color: red;
+    }
+    .danger:focus{
+        outline:none;
+        border-color: 1px solid red;
+    }
+    .text-danger{
+        color: red;
+    }
+    .completed{
+      text-decoration: line-through;
+    }
+  </style>
+  <body>
+    <div id="todo-app">
+      <div>
+        <input type="button" value="全部完成" />
+        <input 
+        type="text" 
+        placeholder="加入一個事項" 
+        v-model="newTodo"
+        v-on:keyup.enter="addTodo"
+        v-bind:class="{danger:isdanger}"
+        />
+        <p class="text-danger" v-if="isdanger">請輸入字元</p>
+      </div>
+      <!-- todo list -->
+      <ul>
+        <li v-for="(item, index) in todos" :key="index">
+          <span v-bind:class="{completed:item.completed}">{{item.title}}</span>
+          <input type="button" value="標註為完成" v-on:click="markCompleted(item)" v-if="!item.completed"/>
+          <input type="button" value="標註未完成" v-on:click="markCompleted(item)" v-else/>
+          <input type="button" value="删除" v-on:click="removeTodo(index)"/>
+          <input type="text" value="编辑" v-if="todoEdited !== null"/>
+        </li>
+      <!-- end todo list -->
+      <div>
+        <span>剩餘 3 項未完成</span>
+        <p>篩選</p>
+        <input type="button" class="selected" value="全部" />
+        <input type="button" value="進行中" />
+        <input type="button" value="已完成" />
+        <p>清除列表</p>
+        <input type="button" value="清除已完成" />
+        <input type="button" value="清除全部" />
+      </div>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    var app = new Vue({
+      el: '#todo-app',
+      data: function () {
+        return {
+          todos: [
+            {
+              title:'test1',
+              completed:false
+            },
+            {
+              title:'test2',
+              completed:false
+            }
+          ],
+          newTodo:'',
+          isdanger:false,
+          todoEdited:null
+        };
+      },
+      methods: {
+          addTodo:function(){
+              if(this.countLength){
+                this.isdanger = false;
+                this.todos.push({title:this.newTodo,completed:false});
+              }
+              else{
+                  this.isdanger = true;
+              }
+              this.newTodo = '';          
+          },
+          removeTodo:function(index){
+            this.todos.splice(index,1)
+          },
+          markCompleted:function(todo){
+            todo.completed=!todo.completed;
+          }
+      },
+      computed: {
+          countLength:function(){
+              let textLength = this.newTodo.length;
+              let value;
+              if(textLength){
+                  value = true;
+              }
+              else{
+                  value = false;
+              }
+              return value;
+          }
+      },
+    });
+  </script>
+</html>
+
