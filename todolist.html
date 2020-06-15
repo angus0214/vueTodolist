@@ -39,11 +39,12 @@
       <!-- todo list -->
       <ul>
         <li v-for="(item, index) in todos" :key="index">
-          <span v-bind:class="{completed:item.completed}">{{item.title}}</span>
+          <span v-bind:class="{completed:item.completed}" >{{item.title}}</span>
           <input type="button" value="標註為完成" v-on:click="markCompleted(item)" v-if="!item.completed"/>
           <input type="button" value="標註未完成" v-on:click="markCompleted(item)" v-else/>
           <input type="button" value="删除" v-on:click="removeTodo(index)"/>
-          <input type="text" value="编辑" v-if="todoEdited !== null"/>
+          <input type="button" value="編輯" v-if="!item.editing" v-on:click="editTodo(item)"/>
+          <input type="text" v-if="item.editing" v-model="item.todoEdited" v-on:keyup.enter="modifyTodo(item,index)"/>
         </li>
       <!-- end todo list -->
       <div>
@@ -67,23 +68,26 @@
           todos: [
             {
               title:'test1',
-              completed:false
+              completed:false,
+              editing:false,
+              todoEdited:''
             },
             {
               title:'test2',
-              completed:false
+              completed:false,
+              editing:false,
+              todoEdited:''
             }
           ],
           newTodo:'',
           isdanger:false,
-          todoEdited:null
         };
       },
       methods: {
           addTodo:function(){
               if(this.countLength){
                 this.isdanger = false;
-                this.todos.push({title:this.newTodo,completed:false});
+                this.todos.push({title:this.newTodo,completed:false,editing:false, todoEdited:''});
               }
               else{
                   this.isdanger = true;
@@ -95,6 +99,21 @@
           },
           markCompleted:function(todo){
             todo.completed=!todo.completed;
+          },
+          editTodo:function(todo){
+            this.todoEdited = Object.assign({},todo);
+            todo.editing = true;
+          },
+          modifyTodo:function(todo,index){
+            console.log(todo.todoEdited);
+            if(todo.todoEdited !== ''){
+              todo.title = todo.todoEdited;
+            }
+            else{
+              this.removeTodo(index);
+            }
+            todo.todoEdited='';
+            todo.editing = false;
           }
       },
       computed: {
