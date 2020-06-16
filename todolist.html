@@ -26,7 +26,7 @@
   <body>
     <div id="todo-app">
       <div>
-        <input type="button" value="全部完成" />
+        <input type="button" value="全部完成" v-on:click="completedAll"/>
         <input 
         type="text" 
         placeholder="加入一個事項" 
@@ -44,11 +44,11 @@
           <input type="button" value="標註未完成" v-on:click="markCompleted(item)" v-else/>
           <input type="button" value="删除" v-on:click="removeTodo(index)"/>
           <input type="button" value="編輯" v-if="!item.editing" v-on:click="editTodo(item)"/>
-          <input type="text" v-if="item.editing" v-model="item.todoEdited" v-on:keyup.enter="modifyTodo(item,index)"/>
+          <input type="text" v-if="item.editing" v-model="item.todoEdited" v-on:keyup.enter="modifyTodo(item,index)" ref="editInput"/>
         </li>
       <!-- end todo list -->
       <div>
-        <span>剩餘 3 項未完成</span>
+        <span>剩餘 {{leftTodosCount}} 項未完成</span>
         <p>篩選</p>
         <input type="button" class="selected" value="全部" />
         <input type="button" value="進行中" />
@@ -105,6 +105,7 @@
             todo.editing = true;
           },
           modifyTodo:function(todo,index){
+
             console.log(todo.todoEdited);
             if(todo.todoEdited !== ''){
               todo.title = todo.todoEdited;
@@ -114,6 +115,11 @@
             }
             todo.todoEdited='';
             todo.editing = false;
+          },
+          completedAll(){
+            this.todos.forEach(function(value){
+              value.completed = true;
+            });
           }
       },
       computed: {
@@ -127,6 +133,12 @@
                   value = false;
               }
               return value;
+          },
+          leftTodosCount:function(){
+            let count = this.todos.filter(function(item){
+              return item.completed === false; 
+            })
+            return count.length;
           }
       },
     });
