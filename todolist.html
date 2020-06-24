@@ -43,8 +43,8 @@
           <input type="button" value="標註為完成" v-on:click="markCompleted(item)" v-if="!item.completed"/>
           <input type="button" value="標註未完成" v-on:click="markCompleted(item)" v-else/>
           <input type="button" value="删除" v-on:click="removeTodo(index)"/>
-          <input type="button" value="編輯" v-if="!item.editing" v-on:click="editTodo(item)"/>
-          <input type="text" v-if="item.editing" v-model="item.todoEdited" v-on:keyup.enter="modifyTodo(item,index)" ref="editInput"/>
+          <input type="button" value="編輯" v-if="!item.editing" v-on:click="editTodo(item,index)"/>
+          <input type="text" v-show="item.editing" v-model="item.todoEdited" v-on:keyup.enter="modifyTodo(item,index)" ref="editing"/>
         </li>
       <!-- end todo list -->
       <div>
@@ -60,6 +60,10 @@
     </div>
   </body>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
   <script>
     var app = new Vue({
       el: '#todo-app',
@@ -100,9 +104,11 @@
           markCompleted:function(todo){
             todo.completed=!todo.completed;
           },
-          editTodo:function(todo){
+          editTodo:function(todo,index){
             this.todoEdited = Object.assign({},todo);
             todo.editing = true;
+            console.log(this.$refs.editing[index]);
+            this.$refs.editing[index].focus();
           },
           modifyTodo:function(todo,index){
 
