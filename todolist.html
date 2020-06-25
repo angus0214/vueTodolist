@@ -22,6 +22,11 @@
     .completed{
       text-decoration: line-through;
     }
+    .selected{
+      background-color: red;
+      color: #fff;
+    }
+
   </style>
   <body>
     <div id="todo-app">
@@ -38,7 +43,7 @@
       </div>
       <!-- todo list -->
       <ul>
-        <li v-for="(item, index) in todos" :key="index">
+        <li v-for="(item, index) in filterTodo" :key="index">
           <span v-bind:class="{completed:item.completed}" >{{item.title}}</span>
           <input type="button" value="標註為完成" v-on:click="markCompleted(item)" v-if="!item.completed"/>
           <input type="button" value="標註未完成" v-on:click="markCompleted(item)" v-else/>
@@ -50,9 +55,9 @@
       <div>
         <span>剩餘 {{leftTodosCount}} 項未完成</span>
         <p>篩選</p>
-        <input type="button" class="selected" value="全部" />
-        <input type="button" value="進行中" />
-        <input type="button" value="已完成" />
+        <input type="button" value="全部" v-on:click="intention = 'all'" v-bind:class="{selected:intention === 'all'}"/>
+        <input type="button" value="進行中" v-on:click="intention = 'inProgress'" v-bind:class="{selected:intention === 'inProgress'}"/>
+        <input type="button" value="已完成" v-on:click="intention = 'completed'" v-bind:class="{selected:intention === 'completed'}"/>
         <p>清除列表</p>
         <input type="button" value="清除已完成" />
         <input type="button" value="清除全部" />
@@ -81,6 +86,7 @@
           ],
           newTodo:'',
           isdanger:false,
+          intention:''
         };
       },
       methods: {
@@ -139,6 +145,21 @@
               return item.completed === false; 
             })
             return count.length;
+          },
+          filterTodo(){
+            if(this.intention === 'inProgress'){
+              return this.todos.filter(function(item){
+                return item.completed === false
+              })
+            }
+            else if(this.intention === 'completed'){
+              return this.todos.filter(function(item){
+                return item.completed === true;
+              })
+            }
+            else{
+              return this.todos;
+            }
           }
       },
     });
